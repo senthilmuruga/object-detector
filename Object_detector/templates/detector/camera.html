@@ -1,0 +1,168 @@
+{% extends 'detector/base.html' %}
+
+{% block content %}
+
+<style>
+body {
+  font-family: Arial;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+form.example input[type=text] {
+  padding: 10px;
+  font-size: 17px;
+  border: 1px solid grey;
+  float: left;
+  width: 92%;
+  background: #f1f1f1;
+}
+
+form.example button {
+  float: left;
+  width: 8%;
+  padding: 10px;
+  background: #2196F3;
+  color: white;
+  font-size: 17px;
+  border: 1px solid grey;
+  border-left: none;
+  cursor: pointer;
+}
+
+form.example button:hover {
+  background: #0b7dda;
+}
+
+form.example::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+
+</style>
+<script>
+    $(document).ready(function(){
+    $('.process input[type="radio"]').click(function(){
+        var inputValue = $(this).attr("value");
+        var targetBox = $("." + inputValue);
+        $(".box").not(targetBox).hide();
+        $(targetBox).show();
+    });
+});
+
+
+
+</script>
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-6">
+            {% for message in messages %}
+            <div class="alert alert-success">
+                <a class="close" data-dismiss="alert" href="#">×</a>
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<br>
+<br>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <h5> <strong>CAMERA NAME :</strong> {{ camera.camera_name.title }}</h5>
+            <div class='process'>
+                <p class="text-info"><strong>Select the Process</strong></p>
+                <label><input class="form-check-input" name="colorRadio" type="radio"
+                                        value="video" checked>Rendering only video</label><br>
+                <label><input class="form-check-input" name="colorRadio" type="radio" value="data">
+                    Collecting Data from video</label><br>
+            </div>
+            <br/>
+            <div class="video box">
+                <form action="{% url 'video_render' camera.id %}" method="POST" target="_blank">
+                    {% csrf_token %}
+                    <div class="form-group">
+
+                        <label class="text-info" for="exampleFormControlSelect1"><strong>Select Video</strong></label>
+                        <select class="form-control" id="exampleFormControlSelect1" name="file">
+                            {% for file in list_of_files %}
+                            <option>{{ file }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <br><br>
+                    <div class="col-md-12">
+                        <p class="text-info"><strong>Select Objects:</strong></p>
+                        <div class="form-group">
+                            {% for objs in classes %}
+                            <div class="form-check form-check-inline">
+                                <label class="form-check-label" for={{ objs }}>{{ objs }}</label><br>
+                                &nbsp&nbsp<input class="form-check-input" id={{ objs }} multiple name="objs[]"
+                                                 type="checkbox"
+                                                 value={{ objs }}>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                    </div>
+                    <button class="btn btn-primary" type="submit">video Render</button>
+                </form>
+            </div>
+            <div class="data box" style="display: none;">
+                {% if camera %}
+                <form action="{% url 'data_processing' camera.id %}" method="POST">
+                    {% endif %}
+                    {% csrf_token %}
+                    <div class="form-group">
+
+                        <label for="exampleFormControlSelect3">Select Video</label>
+                        <select class="form-control" id="exampleFormControlSelect3" name="file">
+                            {% for file in list_of_files %}
+                            <option>{{ file }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <br><br>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <strong>Select Objects:</strong>
+                            <br/><br/>
+                            {% for objs in classes %}
+                            <div class="form-check form-check-inline">
+                                <label class="form-check-label" for={{ objs }}>{{ objs }}</label><br>
+                                &nbsp&nbsp<input class="form-check-input" id={{ objs }} multiple name="objs[]"
+                                                 type="checkbox"
+                                                 value={{ objs }} >
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                    </div>
+                    <button class="btn btn-primary" type="submit">Collect Data</button>
+                </form>
+            </div>
+        </div><br/><br/><br/>
+        <div class="col-md-4">
+            <p>Please give the number of day to retain the video data </p>
+            <form action="{% url 'video_delete' %}" method="POST">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="camera_name">TTL Day:</label>
+                    <input class="form-control" id="camera_name" name="day" placeholder="Enter the Day"
+                           required type="number">
+                    </div>
+                    <button class="btn btn-primary" type="submit">Delete Video</button>
+        </div>
+    </div>
+    <br>
+</div>
+
+
+{% endblock %}

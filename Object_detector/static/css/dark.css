@@ -1,0 +1,34 @@
+body{
+	background-color: rgb(120, 113, 113) !important;
+	color: rgb(250,235,220)
+}
+
+h1, h2, h3, h4, h5, h6{
+	color: #fff;
+}
+
+p, span, small{
+	color: #eaeaea;
+}
+
+hr{
+	margin: 20px;
+	background-color: #eaeaea;
+}
+
+.navbar{
+        background: rgb(153, 149, 148);
+        }
+
+.nav-link{
+        color: rgb(250,250,250)
+        }
+
+.navbar-l{
+        color: rgb(250,250,250)
+        }
+
+.form-check-label{
+        color: rgb(250,250,250)
+
+}

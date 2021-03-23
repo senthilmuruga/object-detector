@@ -1,0 +1,175 @@
+<!doctype html>
+{% load static %}
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
+    <!-- Bootstrap CSS -->
+    <link crossorigin="anonymous" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+          integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" rel="stylesheet">
+
+
+    <link crossorigin="anonymous" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css"
+          rel="stylesheet">
+
+    <title>Detector</title>
+
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css"
+          rel="stylesheet"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
+    <link href="{% static 'css/light.css' %}" id="mystylesheet" rel="stylesheet" type="text/css">
+
+
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg fixed-top scrolling-navbar">
+    <a class="navbar-l" href="{% url 'index' %}" style="font-size:25px;">Detector</a>
+    <button class="navbar-toggler" data-target="#navbarSupportedContent" data-toggle="collapse" type="button">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item active">
+                <a class="nav-link" style="font-size:20px" href="{% url 'index' %}">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" style="font-size:20px" href="{% url 'dashboard' %}">Camera</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" style="font-size:20px" href="{% url 'upload_video' %}">Video</a>
+            </li>
+            {% if user.is_authenticated %}
+            <li class="nav-item active navbar-right">
+                <a class="nav-link" href="#" style="font-size:20px"><i aria-hidden="true"
+                                                                       class="fa fa-user"></i>&nbsp{{request.user}}
+                </a>
+            </li>
+            &nbsp
+            <li class="nav-item active navbar-right">
+                <a class="nav-link" href="{% url 'logout' %}" style="font-size:20px"><i aria-hidden="true"
+                                                                                        class="fa fa-sign-out"></i>&nbspLogout</a>
+            </li>
+            &nbsp
+            <li class="nav-item active navbar-right">
+                <a onclick="swapStyles('light.css')"><img class="rounded-circle" height="30px" width="30px" src="{% static 'image/sun.png' %}">
+                </a>&nbsp
+                <a onclick="swapStyles('dark.css')"><img class="rounded-circle" height="30px" width="30px" src="{% static 'image/moon.png' %}">
+                </a>&nbsp
+            </li>
+
+            {% else %}
+            <li class="nav-item active">
+                <a class="nav-link" href="{% url 'register' %}" style="font-size:20px"><i class="fa fa-user-plus"></i>&nbspRegister</a>
+            </li>
+            &nbsp
+            <li class="nav-item active">
+                <a class="nav-link" href="{% url 'login' %}" style="font-size:20px"><i aria-hidden="true"
+                                                                                       class="fa fa-sign-in"></i>&nbspLogin</a>
+            </li>
+            &nbsp
+            {% endif %}
+        </ul>
+    </div>
+</nav>
+<br/><br/>
+{% block content %}
+{% endblock %}
+
+<!-- Optional JavaScript -->
+<script type="text/javascript">
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    var csrftoken = getCookie('csrftoken');
+
+
+
+    var cssFile = "{% static 'css' %}"
+
+
+    function swapStyles(sheet){
+        document.getElementById('mystylesheet').href = cssFile + '/' + sheet
+        localStorage.setItem('theme', sheet)
+
+        updateTheme(sheet)
+    }
+
+
+    function loadSettings(){
+        //Call data and set local storage
+
+        var url = "{% url 'user_settings' %}"
+        fetch(url, {
+            method:'GET',
+            headers:{
+                'Content-type':'application/json'
+            }
+        })
+        .then((response) => response.json())
+        .then(function(data){
+
+            console.log('Data:', data)
+
+            var theme = data.value;
+
+            if (theme == 'light.css' || null){
+                swapStyles('light.css')
+            }else if(theme == 'dark.css'){
+                swapStyles('dark.css')
+            }
+
+
+        })
+
+    }
+
+    loadSettings()
+
+
+    function updateTheme(theme){
+        var url = "{% url 'update_theme' %}"
+        fetch(url, {
+            method:'POST',
+            headers:{
+                'Content-type':'application/json',
+                'X-CSRFToken':csrftoken,
+            },
+            body:JSON.stringify({'theme':theme})
+        })
+    }
+</script>
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script crossorigin="anonymous"
+        integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+        src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
+<script crossorigin="anonymous"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+<script crossorigin="anonymous"
+        integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+        src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
+</body>
+</html>

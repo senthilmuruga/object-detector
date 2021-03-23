@@ -1,0 +1,57 @@
+{% extends 'detector/base.html' %}
+
+
+{% block content %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-7">
+            <br>
+            <br>
+            <h3 align='center'> Welcome to Image Detector </h3>
+
+            <p>
+                To build a complete Django server that is able to deploy an object detection model (like yolov3), or the
+                likes, and display the results in a dashboard(front end) in real-time.
+            </p>
+        </div>
+
+        <div class="col-sm-4"><br>
+            {% for message in messages %}
+            <div class="alert alert-success">
+                <a class="close" data-dismiss="alert" href="#">×</a>
+                {{ message }}
+            </div>
+            {% endfor %}
+
+            <form action="{% url 'login' %}" class="form-signin" method="post">
+                {% csrf_token %}<br>
+                <label class="sr-only" for="username">User Name</label>
+                <input autofocus class="form-control" id="username" name="username"
+                       placeholder="User Name" required type="text"><br>
+                <label class="sr-only" for="inputPassword">Password</label>
+                <input class="form-control" id="inputPassword"
+                       name="inputPassword" placeholder="Password" required type="password"><br>
+                <div class="container">
+                    <div class="row">
+                        <div class="checkbox mb-3">
+                            <label>
+                                <input type="checkbox" value="remember-me"> Remember me
+                            </label>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+            </form>
+            <br>
+
+        </div>
+
+    </div>
+</div>
+
+
+{% endblock %}
